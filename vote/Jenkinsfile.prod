@@ -3,6 +3,10 @@ pipeline {
   environment {
     imagetag = GIT_COMMIT.take(7)
   }
+
+
+
+
   stages{
 
     stage("build-and-push-image"){
