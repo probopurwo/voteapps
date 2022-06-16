@@ -1,0 +1,44 @@
+pipeline {
+  agent { label 'docker' } 
+  environment {
+    imagetag = GIT_COMMIT.take(7)
+  }
+  stages{
+
+    stage("build-and-push-image"){
+      when{
+        changeset "**/vote/**"
+      }
+      steps{
+        container('kaniko'){
+          sh 'ls -lah; env;'
+          sh 'cd vote; ls -lah; /kaniko/executor --context `pwd` --verbosity debug --destination harbor6.btech.id/library/vote:${imagetag}'
+        }
+      }
+    }
+
+
+    stage("deploy-to-prod"){
+      when{
+        changeset "**/vote/**"
+      }
+      steps{
+        container('jnlp'){
+          sshagent(credentials: ['ssh-private-key-lb']) {
+            sh '''
+                echo $imagetag;
+                [ -d ~/.ssh ] || mkdir ~/.ssh && chmod 0700 ~/.ssh
+                ssh-keyscan -t rsa,dsa 10.99.99.11 >> ~/.ssh/known_hosts
+                ssh root@10.99.99.11 "echo ${imagetag}"
+            '''
+          }
+        }
+      }       
+    }
+  }
+  post{
+    always{
+      echo 'Pipeline Complete'
+    }
+  }
+}
