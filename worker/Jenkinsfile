@@ -52,7 +52,7 @@ pipeline {
       steps{
         container('kaniko'){
           sh 'ls -lah'
-          sh 'cd worker; ls -lah; /kaniko/executor --context `pwd` --verbosity debug --destination harborX.btech.id/library/worker:main'
+          sh 'cd worker; ls -lah; /kaniko/executor --context `pwd` --verbosity debug --destination harbor6.btech.id/library/worker:main'
         }
       }
     }
