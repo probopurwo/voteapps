@@ -1,15 +1,6 @@
 pipeline {
   agent { label 'docker' }
 
-
-
-
-
-
-
-
-
-
   stages{
     stage("build"){
       tools{
@@ -58,7 +49,7 @@ pipeline {
       steps{
         container('kaniko'){
           sh 'ls -lah; env;'
-          sh 'cd worker; ls -lah; /kaniko/executor --context `pwd` --verbosity debug --destination harborX.btech.id/library/worker:${ref##*/}'
+          sh 'cd worker; ls -lah; /kaniko/executor --context `pwd` --verbosity debug --destination harbor6.btech.id/library/worker:${ref##*/}'
         }
       }
     }
